@@ -33,6 +33,8 @@ Robot Model(s): Swervebot
  away from the Cortex
  --------------------------------------------------------------------------------------------------*/
 
+// int test1 = 0, test2 = 0, test3 = 0, test4 = 0;
+
 int encoderCalLF = 1;
 int encoderCalRF = 1;
 int encoderCalLR = 1;
@@ -115,6 +117,10 @@ while (true) {
 		SensorValue[green]=false; SensorValue[yellow]=true; SensorValue[red]=false;
 		wait1Msec(3000); // time to set robot down
 		}
+
+	if (vexRT[Ch5] != 0 && vexRT[Ch6] != 0 ) { // left and rigth buttons pressed: recalibrate gyro
+		needToCalibrateGyro = true;
+	  }
 
 	if (needToCalibrateGyro) {
 		//Completely clear out any previous sensor readings by setting the port to "sensorNone"
