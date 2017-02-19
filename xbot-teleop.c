@@ -32,16 +32,12 @@ Robot Model(s): Swervebot
  Analog Port 8 in8 VEX Gyro Top-center mounted,
  away from the Cortex
  --------------------------------------------------------------------------------------------------*/
-int gyroTest = 0;
 
 int encoderCalLF = 1;
 int encoderCalRF = 1;
 int encoderCalLR = 1;
 int encoderCalRR = 1;
 int maxEncoderValue = 1;
-
-int speedTest1 = 0;
-int speedTest2 = 0;
 
 bool needToCalibrateGyro = true;
 bool calibratingMotors = false;
@@ -170,9 +166,6 @@ while (true) {
 		} else { // close enough to target, don't rotate
 			X2 = 0;
 		}
-			speedTest1 = gyroDiff;
-
-		speedTest2 = SensorValue[gyro];
 	}
 
 	//Remote Control Commands
