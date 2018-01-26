@@ -17,6 +17,8 @@
 //Main competition background code...do not modify!
 #include "Vex_Competition_Includes.c"
 
+#include "VexellentGyro.c"
+
 /*---------------------------------------------------------------------------*/
 /*                          Pre-Autonomous Functions                         */
 /*                                                                           */
@@ -32,57 +34,64 @@ void pre_auton()
 	bStopTasksBetweenModes = true;
 }
 
+void forward(float feet, int speed) {
+  motor[RightFront] = speed; motor[RightBack] = speed;
+  motor[LeftFront] = speed; motor[LeftBack] = speed;
+  wait1Msec(feet*speed*8); // time depends on speed (no encoders)
+  motor[RightFront] = 0; motor[RightBack] = 0; // stop
+  motor[LeftFront] = 0; motor[LeftBack] = 0;
+  wait1Msec(250);
+}
+
+void raise_lift () {
+	motor[WinchLeft] = 50;
+	motor[WinchRight] = 50;
+	wait1Msec(600);
+	motor[WinchLeft] = 0;
+	motor[WinchRight] = 0;
+  wait1Msec(250);
+}
+
+void lower_lift () {
+	motor[WinchLeft] = -30;
+	motor[WinchRight] = -30;
+	wait1Msec(800);
+	motor[WinchLeft] = 0;
+	motor[WinchRight] = 0;
+  wait1Msec(250);
+}
 
 task autonomous()
 {
-	motor[LeftFront] = 90;
-	motor[LeftBack] = 90;
-	motor[RightFront] = 90;
-	motor[RightBack] = 90;
-	wait(1);
-	motor[LeftFront] = 90;
-	motor[LeftBack] = 90;
-	motor[RightFront] = 90;
-	motor[RightBack] = 90;
-	wait(1);
-	motor[LeftFront] = 90;
-	motor[LeftBack] = 90;
-	motor[RightFront] = 90;
-	motor[RightBack] = 90;
-	wait(1);
-	motor[LeftFront] = 90;
-	motor[LeftBack] = 90;
-	motor[RightFront] = 90;
-	motor[RightBack] = 90;
-	wait(1);
+	// 1. forward 2 feet
+	forward (2, 60);
+
+	// 2. raise lift
+	raise_lift();
+
+	// 3. turn 180 degrees
+	turn (180); // degrees, positive means left turn
+
+	// 4. forward 4 feet
+	forward (4, 60);
+
+	// 5. turn 90 deg left
+	turn (90);
+
+	// 6. forward 2 feet
+	forward (2, 60);
+
+	// 7. turn 135 deg
+	turn (135);
+
+	// 8. forward 4 feet
+	forward (4, 60);
+
+	// 9. lower lift
+	lower_lift();
+
 }
-/*
-startMotor(DriveRF, 127);
-startMotor(DriveLF, 127);
-wait(2.2);
-stopMotor(DriveRF);
-stopMotor(DriveLF);
-startMotor(Claw, 50);
-wait(0.5);
-stopMotor(Claw);
-startMotor(TowerL, 50);
-startMotor(TowerR, 50);
-wait(0.5);
-stopMotor(TowerL);
-stopMotor(TowerR);
-startMotor(DriveLF, 65);
-wait(0.99);
-stopMotor(DriveLF);
-startMotor(DriveLF, 127);
-startMotor(DriveRF, 127);
-wait(2.2);
-stopMotor(DriveLF);
-stopMotor(DriveRF);
-startMotor(Claw, -50);
-wait(0.5);
-stopMotor(Claw);
-}
-*/
+
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -133,43 +142,6 @@ task usercontrol
 }
 
 /*
-while (true)
-{
-motor[DriveLF] = vexRT[Ch3]; //left front motor
-motor[DriveLB] = vexRT[Ch3]; //left back motor
-motor[DriveRF] = vexRT[Ch2]; //right forward motor
-motor[DriveRB] = vexRT[Ch2]; //right back motor
-///////////////////////////////
-if(vexRT[Btn6U] == 1)
-{
-motor[TowerL] = 80;
-motor[TowerR] = 80;
-}
-else if(vexRT[Btn5U] == 1)
-{
-motor[TowerL] = -80;
-motor[TowerR] = -80;
-}
-else
-{
-motor[TowerL] = 0;
-motor[TowerR] = 0;
-}
-/////////////////////////////////
-if(vexRT[Btn6D] == 1)
-{
-motor[Claw] = 80;
-}
-else if(vexRT[Btn5D] == 1)
-{
-motor[Claw] = -80;
-}
-else
-{
-motor[Claw] = 0;
-}
-}
-}
 ////////Controls/////////
 //joysticks for moving
 //buttons on right side are always up/positive
