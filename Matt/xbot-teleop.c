@@ -92,7 +92,7 @@ int X2 = 0, Y1 = 0, X1 = 0, Y2 = 0, threshold = 15;
 
 while (true) {
 
-  UserControlCodePlaceholderForTesting();  // display competition status on LCD
+  // UserControlCodePlaceholderForTesting();  // display competition status on LCD
 
 //While the absolute value of the gyro is less than the desired rotation...
 	while(SensorValue[button]){
@@ -186,7 +186,7 @@ while (true) {
 		int gyroDiff = SubtractFromCurrHeading(target);
 		if (myabs(gyroDiff) > GYRO_TOLERANCE) {
 			// rotate according to sign of diff
-			X2 = gyroDiff > 0 ? 50 : -50;
+			X2 = gyroDiff > 0 ? myabs(X2+Y2) : -myabs(X2+Y2);
 		} else { // close enough to target, don't rotate
 			X2 = 0;
 		}

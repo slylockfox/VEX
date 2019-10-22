@@ -24,6 +24,8 @@ Motor Port 5        backLeft            VEX Motor             Back Left motor
 
 task main()
 {
+		bVexAutonomousMode = false;
+
 //Create "deadzone" variables. Adjust threshold value to increase/decrease deadzone
 int X2 = 0, Y1 = 0, X1 = 0, threshold = 15;
 

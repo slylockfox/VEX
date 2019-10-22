@@ -63,5 +63,5 @@ task main()
  motor[rightFrontMotor] = -5;
  motor[leftFrontMotor] = 5;
  wait1Msec(250);
-
+ SensorValue[green]=false; SensorValue[yellow]=false; SensorValue[red]=false;
 }
