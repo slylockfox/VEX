@@ -27,9 +27,9 @@ void pre_auton( void ) {
   Brain.Screen.print("Running pre-auto");
     
   // find zero position for claw by checking current draw
-  MotorClaw.setMaxTorque(10, vex::percentUnits::pct);
+  MotorClaw.setMaxTorque(50, vex::percentUnits::pct);
   MotorClaw.spin(vex::directionType::rev);
-  while((MotorClaw.current(vex::amp)<.2)){
+  while((MotorClaw.current(vex::amp)<.4)){
       vex::task::sleep(100);
   }
   MotorClaw.stop();
