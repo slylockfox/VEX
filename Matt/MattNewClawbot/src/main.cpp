@@ -29,7 +29,7 @@ void pre_auton( void ) {
   // find zero position for claw by checking current draw
   MotorClaw.setMaxTorque(50, vex::percentUnits::pct);
   MotorClaw.spin(vex::directionType::rev);
-  while((MotorClaw.current(vex::amp)<.4)){
+  while((MotorClaw.current(vex::amp)<.5)){
       vex::task::sleep(100);
   }
   MotorClaw.stop();
@@ -117,7 +117,7 @@ void usercontrol( void ) {
     }
     else if(Controller1.ButtonR2.pressing()) { // lowest position
           MotorShoulder.setVelocity(20, vex::velocityUnits::pct);
-          MotorShoulder.startRotateTo(0,vex::rotationUnits::deg);
+          MotorShoulder.startRotateTo(27,vex::rotationUnits::deg);
     }
     else { // stop
         MotorShoulder.stop();
