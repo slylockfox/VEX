@@ -14,15 +14,13 @@
 // Robot Configuration:
 // [Name]               [Type]        [Port(s)]
 // Vision21             vision        21              
+// LeftMotor            motor         1               
+// RightMotor           motor         10              
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 #include "vex.h"
 
 using namespace vex;
-
-event checkRed = event();
-event checkBlue = event();
-event checkGreen = event();
 
 void hasBlueCallback() {
   Brain.Screen.setFont(mono40);
@@ -63,18 +61,33 @@ void hasGreenCallback() {
   }
 }
 
-int main() {
-  // Initializing Robot Configuration. DO NOT REMOVE!
-  vexcodeInit();
-
-  checkBlue(hasBlueCallback);
-  checkRed(hasRedCallback);
-  checkGreen(hasGreenCallback);
-  
+int main() { 
+  int x = 0; int area = 0;
+  int center = 158;// The x coordinate for the center of the vision sensor 
+  int OKError = 50;  //Used to set a range of values to count is being just in front. 
+  int MIN_AREA = 1000;
   while (true) {
-    checkBlue.broadcastAndWait();
-    checkRed.broadcastAndWait();
-    checkGreen.broadcastAndWait();
-    wait(1, seconds);
+    Vision21.takeSnapshot(Vision21__POWERCELL); 
+    if (Vision21.largestObject.exists) { 
+      x = Vision21.largestObject.centerX; 
+      area = Vision21.largestObject.height * Vision21.largestObject.width;
+      if(x< (center-OKError) && area > MIN_AREA) { //If the object is to the left of center 
+          RightMotor.spin(directionType::fwd, 10, velocityUnits::pct); 
+          LeftMotor.spin(directionType::rev, 10, velocityUnits::pct); 
+        } else if (x> center + OKError) { //If the object is to the right of center 
+          RightMotor.spin(directionType::rev, 10, velocityUnits::pct); 
+          LeftMotor.spin(directionType::fwd, 10, velocityUnits::pct); 
+        } else { //The object is not to the right of center and not to the left of center 
+          LeftMotor.stop(brakeType::brake); 
+          RightMotor.stop(brakeType::brake); 
+          } 
+        }  
+    task::sleep(100); 
   }
+
+          //RightMotor.spin(directionType::fwd, 25, velocityUnits::pct); 
+          //LeftMotor.spin(directionType::fwd, 25, velocityUnits::pct); 
+          //task::sleep(2000);
+          //RightMotor.stop();
+          //LeftMotor.stop();
 }
