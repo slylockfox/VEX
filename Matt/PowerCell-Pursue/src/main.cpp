@@ -65,25 +65,28 @@ int main() {
   int x = 0; int area = 0;
   int center = 158;// The x coordinate for the center of the vision sensor 
   int OKError = 50;  //Used to set a range of values to count is being just in front. 
-  int MIN_AREA = 1000;
+  int MIN_AREA = 100;
+  double Kp = .1;
+  double Kpp = .1;
   while (true) {
     Vision21.takeSnapshot(Vision21__POWERCELL); 
     if (Vision21.largestObject.exists) { 
       x = Vision21.largestObject.centerX; 
       area = Vision21.largestObject.height * Vision21.largestObject.width;
-      if(x< (center-OKError) && area > MIN_AREA) { //If the object is to the left of center 
-          RightMotor.spin(directionType::fwd, 10, velocityUnits::pct); 
-          LeftMotor.spin(directionType::rev, 10, velocityUnits::pct); 
-        } else if (x> center + OKError) { //If the object is to the right of center 
-          RightMotor.spin(directionType::rev, 10, velocityUnits::pct); 
-          LeftMotor.spin(directionType::fwd, 10, velocityUnits::pct); 
-        } else { //The object is not to the right of center and not to the left of center 
+     int error = center - x;
+       int error_pursue = MIN_AREA - area;
+      int pursue_speed = Kpp * error_pursue;
+      int diff_speed = Kp * error;
+      if(area > MIN_AREA && abs(error) > OKError) {
+          RightMotor.spin(directionType::fwd, pursue_speed + diff_speed, velocityUnits::pct); 
+          LeftMotor.spin(directionType::fwd, pursue_speed - diff_speed, velocityUnits::pct); 
+        } else {  //The object is not to the right of center and not to the left of center 
           LeftMotor.stop(brakeType::brake); 
           RightMotor.stop(brakeType::brake); 
-          } 
-        }  
+        }
+    } // vision target exists
     task::sleep(100); 
-  }
+  } // while loop
 
           //RightMotor.spin(directionType::fwd, 25, velocityUnits::pct); 
           //LeftMotor.spin(directionType::fwd, 25, velocityUnits::pct); 
