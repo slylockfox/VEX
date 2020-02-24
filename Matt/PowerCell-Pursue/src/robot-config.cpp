@@ -14,10 +14,11 @@ vision Vision21 = vision (PORT21, 50, Vision21__POWERCELL);
 /*vex-vision-config:end*/
 motor LeftMotor = motor(PORT1, ratio18_1, false);
 motor RightMotor = motor(PORT10, ratio18_1, true);
+controller Controller1 = controller(primary);
 
 // VEXcode generated functions
-
-
+// define variable for remote controller enable/disable
+bool RemoteControlCodeEnabled = true;
 
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Text.
