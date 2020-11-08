@@ -1,5 +1,10 @@
 #pragma config(Sensor, dgtl1,  solenoid1,      sensorDigitalOut)
 #pragma config(Sensor, dgtl2,  solenoid2,      sensorDigitalOut)
+#pragma config(Sensor, dgtl3,  compressor3,    sensorDigitalOut)
+#pragma config(Sensor, dgtl4,  compressor4,    sensorDigitalOut)
+#pragma config(Sensor, dgtl10, LEDred,         sensorLEDtoVCC)
+#pragma config(Sensor, dgtl11, LEDyellow,      sensorLEDtoVCC)
+#pragma config(Sensor, dgtl12, LEDgreen,       sensorLEDtoVCC)
 #pragma config(Motor,  port2,           RF,            tmotorVex393_MC29, openLoop, reversed)
 #pragma config(Motor,  port3,           RR,            tmotorVex393HighSpeed_MC29, openLoop, reversed)
 #pragma config(Motor,  port4,           LF,            tmotorVex393HighSpeed_MC29, openLoop, reversed)
@@ -10,33 +15,49 @@ task main()
 {
   while(true)                     // Loop Forever
   {
-    if (vexRT[Btn5U] || vexRT[Btn5D] || vexRT[Btn6U] || vexRT[Btn6D])         // If button 6U (upper right shoulder button) is pressed:
-    {
-      SensorValue[solenoid1] = 1;  // ...activate the solenoid.
-      SensorValue[solenoid2] = 1;  // ...activate the solenoid.
+  	// 2 buttons for special functions
+
+  	// compressor: two buttons on same side
+    bool compressorOn = false;
+    if ((vexRT[Btn7D] && vexRT[Btn7L]) || vexRT[Btn8D] && vexRT[Btn8R]) {
+	    compressorOn = true;
+
+	  // any trigger operates shooter
+  	} else if (vexRT[Btn5U] || vexRT[Btn5D] || vexRT[Btn6U] || vexRT[Btn6D])  {
+  		if (vexRT[Btn7D]) {
+  			// solenoid test: button plus trigger
+	      SensorValue[solenoid1] = 1;
+	      SensorValue[solenoid2] = 0;
+	    } else if (vexRT[Btn8D]) {
+	    	// solenoid test: button plus trigger
+	      SensorValue[solenoid1] = 0;
+	      SensorValue[solenoid2] = 1;
+  		} else {
+  			// shoot: both solenoids
+	      SensorValue[solenoid1] = 1;  // ...activate the solenoid.
+	      SensorValue[solenoid2] = 1;  // ...activate the solenoid.
+	    }
+	  } else { // deactivate solenoids
+	      SensorValue[solenoid1] = 0;
+	      SensorValue[solenoid2] = 0;
+	  }
+
+	  // motor test: two buttons, same button each side; otherwise, control with axes
+	  if (vexRT[Btn7L] && vexRT[Btn8L]) {motor[LF] = 100;} else {motor[LF] = vexRT[Ch3];}
+    if (vexRT[Btn7U] && vexRT[Btn8U]) {motor[RF] = 100;} else {motor[RF] = vexRT[Ch2];}
+    if (vexRT[Btn7D] && vexRT[Btn8D]) {motor[LR] = 100;} else {motor[LR] = vexRT[Ch3];}
+    if (vexRT[Btn7R] && vexRT[Btn8R]) {motor[RR] = 100;} else {motor[RR] = vexRT[Ch2];}
+
+    // run compressor if needed
+    if (compressorOn) {
+    	SensorValue[compressor3] = 0;
+    } else {
+    	SensorValue[compressor3] = 1;
     }
-    else if (vexRT[Btn7L])
-    {
-      SensorValue[solenoid1] = 1;
-      SensorValue[solenoid2] = 0;
-    }
-    else if (vexRT[Btn7R])
-    {
-      SensorValue[solenoid1] = 0;
-      SensorValue[solenoid2] = 1;
-    }
-    else
-    {
-      SensorValue[solenoid1] = 0;  // ..deactivate the solenoid.
-      SensorValue[solenoid2] = 0;  // ..deactivate the solenoid.
-    }
-    if (vexRT[Btn8L]) {motor[LF] = 100;} else {motor[LF] = vexRT[Ch3];}
-    if (vexRT[Btn8U]) {motor[RF] = 100;} else {motor[RF] = vexRT[Ch2];}
-    if (vexRT[Btn8D]) {motor[LR] = 100;} else {motor[LR] = vexRT[Ch3];}
-    if (vexRT[Btn8R]) {motor[RR] = 100;} else {motor[RR] = vexRT[Ch2];}
-    //motor[LR] = vexRT[Ch3];
-    //motor[LF] = vexRT[Ch3];
-    //motor[RR] = vexRT[Ch2];
-    //motor[RF] = vexRT[Ch2];
+
+
+  	SensorValue[LEDgreen] = compressorOn;
+  	SensorValue[LEDyellow] = 0;
+  	SensorValue[LEDred] = 0;
   }
 }
