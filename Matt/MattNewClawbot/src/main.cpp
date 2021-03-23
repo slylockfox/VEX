@@ -137,6 +137,13 @@ void usercontrol( void ) {
         MotorClaw.stop();
     }
 
+    // pneumatic collector
+    if (Controller1.ButtonUp.pressing()) {
+        SolenoidH.on();
+    } else if (Controller1.ButtonDown.pressing()) {
+        SolenoidH.off();
+    }
+
     vex::task::sleep(20); //Sleep the task for a short amount of time to prevent wasted resources.
 
     } // forever loop

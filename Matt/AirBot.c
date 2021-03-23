@@ -1,7 +1,7 @@
 #pragma config(Sensor, dgtl1,  solenoid1,      sensorDigitalOut)
 #pragma config(Sensor, dgtl2,  solenoid2,      sensorDigitalOut)
 #pragma config(Sensor, dgtl3,  compressor3,    sensorDigitalOut)
-#pragma config(Sensor, dgtl4,  compressor4,    sensorDigitalOut)
+#pragma config(Sensor, dgtl4,  pressure,       sensorTouch)
 #pragma config(Sensor, dgtl10, LEDred,         sensorLEDtoVCC)
 #pragma config(Sensor, dgtl11, LEDyellow,      sensorLEDtoVCC)
 #pragma config(Sensor, dgtl12, LEDgreen,       sensorLEDtoVCC)
@@ -19,8 +19,11 @@ task main()
 
   	// compressor: two buttons on same side
     bool compressorOn = false;
+    bool pressureSwitchTriggered = !SensorValue[pressure];
     if ((vexRT[Btn7D] && vexRT[Btn7L]) || vexRT[Btn8D] && vexRT[Btn8R]) {
-	    compressorOn = true;
+    	if (!pressureSwitchTriggered) {
+	    	compressorOn = true;
+	  	}
 
 	  // any trigger operates shooter
   	} else if (vexRT[Btn5U] || vexRT[Btn5D] || vexRT[Btn6U] || vexRT[Btn6D])  {
@@ -58,6 +61,6 @@ task main()
 
   	SensorValue[LEDgreen] = compressorOn;
   	SensorValue[LEDyellow] = 0;
-  	SensorValue[LEDred] = 0;
+  	SensorValue[LEDred] = pressureSwitchTriggered;
   }
 }
